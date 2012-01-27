@@ -4,7 +4,7 @@ import array
 
         
 def ExclusionCurve(xVals = None, yVals = None):
-    """Define an exclusion curve based on an array of xvalues and y values."""
+    """Define an exclusion curve based on an array of xvalues and y values. Smooth with a tspline3"""
     if len(xVals) is not len(yVals): assert "N XVals != N YVals, please correct"
     graph = r.TGraph(len(xVals),array.array('d',xVals),array.array('d',yVals))
     spline = r.TSpline3("spline",graph)
@@ -15,7 +15,7 @@ def ExclusionCurve(xVals = None, yVals = None):
 
 
 def StauRegion(TanBeta = None):
-    """docstring for StauRegion"""
+    """Make the stau LSP region for limit plots"""
     graph = None
     st_m0_tanBeta3 = array.array('d',[0,10,20,30,40,50,60,70,80,90,100,0])
     st_m12_tanBeta3 = array.array('d',[337,341,356,378,406,439,473,510,548,587,626,626])
@@ -62,7 +62,7 @@ def StauRegion(TanBeta = None):
 
 
 def Const_Squark_Gluino(TanBeta = None, Line = None):
-  """docstring for ConstSquarkLines"""
+  """Produce the lables and lines for the contours of constant squark and gluino mass, for tan beta 10 or 40"""
   pass
   # ---lines of constant gluino/squark
   SquarkCoef1 = [2.54068e+04, 5.86979e+04, 1.07751e+05, 1.81108e+05, 2.64621e+05]
@@ -117,8 +117,10 @@ def Const_Squark_Gluino(TanBeta = None, Line = None):
   return lnsq,lngl,t3,t4
 
 
+
+
 class MakeLimitPlot(object):
-    """docstring for MakeLimitPlot"""
+    """Make a CMS susy limit plot, for tan beta = 10 or 40"""
     def __init__(self, settingsDict):
         super(MakeLimitPlot, self).__init__()
         self.settings = settingsDict
@@ -134,7 +136,7 @@ class MakeLimitPlot(object):
         self.MakePlot()
 
     def LegendSetUp(self):
-      """docstring for LegendSetUp"""
+      """Set up our legend, this contains the info about the limit curves"""
       # self.CurveLegend.SetHeader("95\% CL limits:")
       self.CurveLegend.SetFillColor(0);
       self.CurveLegend.SetShadowColor(0);
@@ -144,15 +146,19 @@ class MakeLimitPlot(object):
       self.hist.GetXaxis().SetTitle("m_{1/2} GeV")
 
     def MakePlot(self):
-        """docstring for MakePlot"""
+        """docstring for MakePlot
+        Loop though the limit curves twice, the first time drawing with a fill for the expected limit.
+        Then draw the Gluino/squark constant lines.
+        Draw the limit curves again.
+        Go though the legend in the correct order and set up the legend, with the fill style so that it looks correct, all because of more root faf.
+        append each of our plots to an out list, so that they dont get garbage collected
+        """
 
         self.c1.cd()
         self.hist.Draw()
         # Ok Lets make the plot look good.
         # We want the filled area for the pm 1sigma to be behind the gluino squark lines, but the limit lines to be in front
-        
-        
-
+        # Draw lines and fill, we fill the lower limit with solid white as a work around for trying to fill between two lines
         for a in sorted(self.settings['LimitLines']):
             print (self.settings['LimitLines'])[a]
             l = ExclusionCurve(((self.settings['LimitLines'])[a])['xVals'],((self.settings['LimitLines'])[a])['yVals'])
@@ -175,7 +181,7 @@ class MakeLimitPlot(object):
           ob.Draw("fsame")
         
         
-
+        # Draw lines only, no fill
         for a in sorted(self.settings['LimitLines']):
             print (self.settings['LimitLines'])[a]
             lf = ExclusionCurve(((self.settings['LimitLines'])[a])['xVals'],((self.settings['LimitLines'])[a])['yVals'])
@@ -185,7 +191,7 @@ class MakeLimitPlot(object):
             lf.Draw("same")
             
             
-            
+            # Here we do the faf for making sure that the legend is in the correct order and is filled in the legend
             if "Obs" in a or "Expected" in a:
                 print "adding legend for ", a
                 leg = ExclusionCurve(((self.settings['LimitLines'])[a])['xVals'],((self.settings['LimitLines'])[a])['yVals'])

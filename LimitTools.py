@@ -7,6 +7,8 @@ def ExclusionCurve(xVals = None, yVals = None):
     """Define an exclusion curve based on an array of xvalues and y values. Smooth with a tspline3"""
     if len(xVals) is not len(yVals): assert "N XVals != N YVals, please correct"
     graph = r.TGraph(len(xVals),array.array('d',xVals),array.array('d',yVals))
+    graph.SetLineWidth(3)
+    # return graph
     spline = r.TSpline3("spline",graph)
     spline.SetLineWidth(3)
     return spline
@@ -170,7 +172,7 @@ class MakeLimitPlot(object):
                     l.SetFillColor((self.settings['LimitLines'])[a]['FillColor'])
                 self.obList.append(l)
             
-                l.Draw("same")
+                l.Draw("same l")
         
         for i in range(self.settings['NSquarkGluinoLines']):
             for ob in Const_Squark_Gluino(TanBeta = self.settings['tanB'], Line = i):
@@ -188,7 +190,7 @@ class MakeLimitPlot(object):
             lf.SetLineColor((self.settings['LimitLines'])[a]['LineColor'])
             if (self.settings['LimitLines'])[a]['LineStyle'] is not None: lf.SetLineStyle((self.settings['LimitLines'])[a]['LineStyle'])
             self.obList.append(lf)
-            lf.Draw("same")
+            lf.Draw("samel")
             
             
             # Here we do the faf for making sure that the legend is in the correct order and is filled in the legend

@@ -9,7 +9,7 @@ def ExclusionCurve(xVals = None, yVals = None):
     graph = r.TGraph(len(xVals),array.array('d',xVals),array.array('d',yVals))
     graph.SetLineWidth(3)
     # return graph
-    spline = r.TSpline3("spline",graph)
+    spline = r.TSpline3("spline",graph,"",yVals[0],yVals[len(yVals)-1])
     spline.SetLineWidth(3)
     return spline
     pass
@@ -55,10 +55,6 @@ def StauRegion(TanBeta = None):
     legst.SetTextSize(0.03)
     legst.SetTextAngle(80)
     if TanBeta == 40: legst.SetTextAngle(75);
-    
-    
-    
-    
     
     return graph,legst
 
@@ -163,6 +159,7 @@ class MakeLimitPlot(object):
         # Draw lines and fill, we fill the lower limit with solid white as a work around for trying to fill between two lines
         for a in sorted(self.settings['LimitLines']):
             print (self.settings['LimitLines'])[a]
+            if "Sigma" not in a: continue
             l = ExclusionCurve(((self.settings['LimitLines'])[a])['xVals'],((self.settings['LimitLines'])[a])['yVals'])
             l.SetLineColor((self.settings['LimitLines'])[a]['LineColor'])
             if (self.settings['LimitLines'])[a]['FillStyle'] is not None:
@@ -178,9 +175,7 @@ class MakeLimitPlot(object):
             for ob in Const_Squark_Gluino(TanBeta = self.settings['tanB'], Line = i):
                 self.obList.append(ob)
                 ob.Draw("same")
-        for ob in StauRegion(TanBeta = self.settings['tanB']):
-          self.obList.append(ob)
-          ob.Draw("fsame")
+
         
         
         # Draw lines only, no fill
@@ -209,11 +204,16 @@ class MakeLimitPlot(object):
                     self.CurveLegend.AddEntry(leg,((self.settings['LimitLines'])[a]["Legend"])[0],((self.settings['LimitLines'])[a]["Legend"])[1])
 
 
+        for ob in StauRegion(TanBeta = self.settings['tanB']):
+          self.obList.append(ob)
+          ob.Draw("fsame")
         
         
         self.CurveLegend.Draw("same")
         self.lumilabel.Draw("same")
         self.cmsParams.Draw("same")
+        self.hist.Draw("same")
+        # raw_input()
         self.c1.SaveAs("Limit_tanB_%i_A0_%i_Lumi_%s.pdf"%(self.settings['tanB'],self.settings["A0"],self.settings["intLumi"]))
     pass
 

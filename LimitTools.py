@@ -150,7 +150,7 @@ class MakeLimitPlot(object):
       if self.settings['tanB'] == 10:
         self.canvasFile = r.TFile().Open("./GridTaNB10_V1.root")
       if self.settings['tanB'] == 40:
-        self.canvasFile = r.TFile().Open("./GridTaNB10_V1.root")
+        self.canvasFile = r.TFile().Open("./GridTaNB40_V1.root")
       self.c1 = self.canvasFile.Get("GridCanvas")
       self.c1.Print()
       # self.c1.Draw()

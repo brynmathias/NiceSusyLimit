@@ -91,7 +91,7 @@ def Const_Squark_Gluino(TanBeta = None, Line = None):
 
   place_x = 170
   if int(TanBeta) == 40 :place_x = 390
-  t3 =r.TLatex(place_x+10*Line,lnsq.Eval(-50+place_x+10*Line)+5,"#font[12]{#tilde{g}}#font[92]{(%i)GeV}"%(500+250*Line))
+  t3 =r.TLatex(place_x+10*Line,lnsq.Eval(-50+place_x+10*Line)+5,"#font[12]{#tilde{q}}#font[92]{(%i)GeV}"%(500+250*Line))
   t3.SetTextSize(0.03)
   t3.SetTextAngle(-30+Line*5)
   if int(TanBeta) == 40:  t3.SetTextAngle(-40+Line*5)
@@ -122,17 +122,19 @@ class MakeLimitPlot(object):
     def __init__(self, settingsDict):
         super(MakeLimitPlot, self).__init__()
         self.settings = settingsDict
-        self.hist = r.TH2F("","",100,0,2000,80,100,750) if self.settings["tanB"] == 10 else r.TH2F("h1","h1",80,400,2000,100,0,750)
-        self.c1 = r.TCanvas()
+        self.hist = r.TH2F("","",150,0,3000,80,20,1000) if self.settings["tanB"] == 10 else r.TH2F("h1","h1",80,400,2000,100,0,750)
+        self.c1 = None
         self.obList = []
         self.lumilabel = r.TLatex(0.35 if self.settings['tanB'] == 40 else 0.35,0.85,"CMS,  %.2f fb^{-1},  #sqrt{s} = 7 TeV"%(self.settings['intLumi']));
         self.lumilabel.SetNDC()
         self.cmsParams = r.TLatex(0.35,0.65,"tan#beta = %i, A_{0} = 0 GeV, #mu > 0"%(self.settings['tanB']))
         self.cmsParams.SetNDC()
-        self.CurveLegend = r.TLegend(0.33,0.7,0.70,0.84,"","brNDC");
+        self.CurveLegend = r.TLegend(0.35,0.7,0.70,0.84,"","brNDC");
+        self.canvasFile = None
         self.LegendSetUp()
+        self.GetCanvas()
         self.MakePlot()
-
+        
     def LegendSetUp(self):
       """Set up our legend, this contains the info about the limit curves"""
       # self.CurveLegend.SetHeader("95\% CL limits:")
@@ -140,8 +142,18 @@ class MakeLimitPlot(object):
       self.CurveLegend.SetShadowColor(0);
       self.CurveLegend.SetTextSize(0.03);
       self.CurveLegend.SetBorderSize(0);
-      self.hist.GetYaxis().SetTitle("m_{0} GeV")
-      self.hist.GetXaxis().SetTitle("m_{1/2} GeV")
+      self.hist.GetYaxis().SetTitle("m_{1/2} GeV")
+      self.hist.GetXaxis().SetTitle("m_{0} GeV")
+
+    def GetCanvas(self):
+      """docstring for GetCanvas"""
+      if self.settings['tanB'] == 10:
+        self.canvasFile = r.TFile().Open("./GridTaNB10_V1.root")
+      if self.settings['tanB'] == 40:
+        self.canvasFile = r.TFile().Open("./GridTaNB10_V1.root")
+      self.c1 = self.canvasFile.Get("GridCanvas")
+      self.c1.Print()
+      # self.c1.Draw()
 
     def MakePlot(self):
         """docstring for MakePlot
@@ -152,13 +164,13 @@ class MakeLimitPlot(object):
         append each of our plots to an out list, so that they dont get garbage collected
         """
 
-        self.c1.cd()
-        self.hist.Draw()
+        # self.c1.cd()
+        # self.hist.Draw()
         # Ok Lets make the plot look good.
         # We want the filled area for the pm 1sigma to be behind the gluino squark lines, but the limit lines to be in front
         # Draw lines and fill, we fill the lower limit with solid white as a work around for trying to fill between two lines
         for a in sorted(self.settings['LimitLines']):
-            print (self.settings['LimitLines'])[a]
+            # print (self.settings['LimitLines'])[a]
             if "Sigma" not in a: continue
             l = ExclusionCurve(((self.settings['LimitLines'])[a])['xVals'],((self.settings['LimitLines'])[a])['yVals'])
             l.SetLineColor((self.settings['LimitLines'])[a]['LineColor'])
@@ -171,16 +183,16 @@ class MakeLimitPlot(object):
             
                 l.Draw("same l")
         
-        for i in range(self.settings['NSquarkGluinoLines']):
-            for ob in Const_Squark_Gluino(TanBeta = self.settings['tanB'], Line = i):
-                self.obList.append(ob)
-                ob.Draw("same")
+        # for i in range(self.settings['NSquarkGluinoLines']):
+        #     for ob in Const_Squark_Gluino(TanBeta = self.settings['tanB'], Line = i):
+        #         self.obList.append(ob)
+        #         ob.Draw("same")
 
         
         
         # Draw lines only, no fill
         for a in sorted(self.settings['LimitLines']):
-            print (self.settings['LimitLines'])[a]
+            # print (self.settings['LimitLines'])[a]
             lf = ExclusionCurve(((self.settings['LimitLines'])[a])['xVals'],((self.settings['LimitLines'])[a])['yVals'])
             lf.SetLineColor((self.settings['LimitLines'])[a]['LineColor'])
             if (self.settings['LimitLines'])[a]['LineStyle'] is not None: lf.SetLineStyle((self.settings['LimitLines'])[a]['LineStyle'])
@@ -190,7 +202,7 @@ class MakeLimitPlot(object):
             
             # Here we do the faf for making sure that the legend is in the correct order and is filled in the legend
             if "Obs" in a or "Expected" in a:
-                print "adding legend for ", a
+                # print "adding legend for ", a
                 leg = ExclusionCurve(((self.settings['LimitLines'])[a])['xVals'],((self.settings['LimitLines'])[a])['yVals'])
                 leg.SetLineColor((self.settings['LimitLines'])[a]['LineColor'])
                 if (self.settings['LimitLines'])[a]['FillStyle'] is not None:
@@ -204,9 +216,9 @@ class MakeLimitPlot(object):
                     self.CurveLegend.AddEntry(leg,((self.settings['LimitLines'])[a]["Legend"])[0],((self.settings['LimitLines'])[a]["Legend"])[1])
 
 
-        for ob in StauRegion(TanBeta = self.settings['tanB']):
-          self.obList.append(ob)
-          ob.Draw("fsame")
+        # for ob in StauRegion(TanBeta = self.settings['tanB']):
+        #   self.obList.append(ob)
+        #   ob.Draw("fsame")
         
         
         self.CurveLegend.Draw("same")
@@ -215,6 +227,7 @@ class MakeLimitPlot(object):
         self.hist.Draw("same")
         # raw_input()
         self.c1.SaveAs("Limit_tanB_%i_A0_%i_Lumi_%s.pdf"%(self.settings['tanB'],self.settings["A0"],self.settings["intLumi"]))
+        self.c1.SaveAs("Limit_tanB_%i_A0_%i_Lumi_%s.png"%(self.settings['tanB'],self.settings["A0"],self.settings["intLumi"]))
     pass
 
 

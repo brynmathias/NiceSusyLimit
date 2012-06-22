@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 import ROOT as r
-from LimitTools import *
+from LimitTools import MakeLimitPlot
 r.gROOT.SetStyle("Plain")
 r.gStyle.SetOptStat(0)
 

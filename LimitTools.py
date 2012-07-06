@@ -16,104 +16,104 @@ def ExclusionCurve(xVals = None, yVals = None):
     
 
 
-def StauRegion(TanBeta = None):
-    """Make the stau LSP region for limit plots"""
-    graph = None
-    st_m0_tanBeta3 = array.array('d',[0,10,20,30,40,50,60,70,80,90,100,0])
-    st_m12_tanBeta3 = array.array('d',[337,341,356,378,406,439,473,510,548,587,626,626])
-
-    st_m0_tanBeta10 =  array.array('d',[0,   10, 20, 30, 40, 50, 60, 70, 80,90, 100,110,130,150,0])
-    st_m12_tanBeta10 = array.array('d',[213,220,240,275,312,352,393,435,476,518,559,600,682,763,763])
-
-    st_m0_tanBeta50 = array.array('d',[200,210,220,230,240,250,260,270,280,290,310,325,200,200])
-    st_m12_tanBeta50 = [206,226,246,267,288,310,332,354,376,399,450,500,500,206]
-
-    st_m0_tanBeta40 = array.array('d',[380,450,380])
-    st_m12_tanBeta40 = array.array('d',[590,780,780])
-    if int(TanBeta) is 3:
-      graph =r.TGraph(len(st_m12_tanBeta3),st_m0_tanBeta3,st_m12_tanBeta3)
-    if int(TanBeta) is 10:
-      graph= r.TGraph(len(st_m0_tanBeta10),st_m0_tanBeta10,st_m12_tanBeta10)
-    if int(TanBeta) is 50:
-      graph =r.TGraph(len(st_m12_tanBeta50),st_m0_tanBeta50,st_m12_tanBeta50)
-    if int(TanBeta) is 40:
-      graph =r.TGraph(len(st_m12_tanBeta40),st_m0_tanBeta40,st_m12_tanBeta40)
-    graph.SetFillColor(40)
-    graph.SetFillStyle(1001)
-    
-    
-    ypos_1 = 0.455 if TanBeta == 10 else 0.143 if TanBeta == 40 else 0.76 
-    ypos_2 = 0.465 if TanBeta == 10 else 0.153 if TanBeta == 40 else 0.78
-    xpos_1 = 0.46  if TanBeta == 10 else 0.83  if TanBeta == 40 else 0.16
-    xpos_2 = 0.1   if TanBeta == 10 else 0.85  if TanBeta == 40 else 0.17
- 
-
-    legst = r.TLegend(xpos_1,ypos_1,xpos_2,ypos_2);
-    legst.SetHeader("#tilde{#tau} = LSP")
-    legst.SetFillStyle(0)
-    legst.SetBorderSize(0)
-    legst.SetTextSize(0.03)
-    legst.SetTextAngle(80)
-    if TanBeta == 40: legst.SetTextAngle(75);
-    
-    return graph,legst
-
-
-def Const_Squark_Gluino(TanBeta = None, Line = None):
-  """Produce the lables and lines for the contours of constant squark and gluino mass, for tan beta 10 or 40"""
-  pass
-  # ---lines of constant gluino/squark
-  SquarkCoef1 = [2.54068e+04, 5.86979e+04, 1.07751e+05, 1.81108e+05, 2.64621e+05]
-  SquarkCoef2 = [1.88535e-01, 1.93101e-01, 2.00899e-01, 2.21128e-01, 2.21160e-01]
-  SquarkCoef3 = [2.54068e+04, 5.86979e+04, 1.07751e+05, 1.81108e+05, 2.64621e+05]
-
-
-  if int(TanBeta) is 10 :lnsq = r.TF1("lnsq_%i"%Line,"sqrt([0]-x*x*[1]+[2])",0,2000)
-  if int(TanBeta) is 40 :lnsq = r.TF1("lnsq_%i"%Line,"sqrt([0]-x*x*[1]+[2])",380,2000)
-  lnsq.SetParameter(0,SquarkCoef1[Line])
-  lnsq.SetParameter(1,SquarkCoef2[Line])
-  lnsq.SetParameter(2,SquarkCoef3[Line])
-  lnsq.SetLineWidth(1)
-  lnsq.SetLineColor(r.kGray)
-
-
-
-  GluinoCoef1 = [201.77, 311.027, 431.582, 553.895, 676.137]
-  GluinoCoef2 = [-0.0146608, -0.01677, -0.022244, -0.0271851, -0.0292212]
-    
-  if (TanBeta == 10): lngl = r.TF1("lngl_%i"%Line,"[0]+x*[1]",0,2000)
-  if (TanBeta == 40): lngl = r.TF1("lngl_%i"%Line,"[0]+x*[1]",380,2000)
-
-  lngl.SetParameter(0,GluinoCoef1[Line])
-  lngl.SetParameter(1,GluinoCoef2[Line])
-  lngl.SetLineWidth(1)
-  lngl.SetLineColor(r.kGray)
-
-  place_x = 170
-  if int(TanBeta) == 40 :place_x = 390
-  t3 =r.TLatex(place_x+10*Line,lnsq.Eval(-50+place_x+10*Line)+5,"#font[12]{#tilde{q}}#font[92]{(%i)GeV}"%(500+250*Line))
-  t3.SetTextSize(0.03)
-  t3.SetTextAngle(-30+Line*5)
-  if int(TanBeta) == 40:  t3.SetTextAngle(-40+Line*5)
-  t3.SetTextColor(r.kGray+2)
-
-  place_x = 423
-  place_y = 18
-  if int(TanBeta) == 10:
-    place_x = 1650
-    place_y = 10
-  
-  if int(TanBeta) == 40:
-    place_x = 1700
-    place_y = 10
-  
-  t4 = r.TLatex(place_x,place_y+lngl.Eval(800+Line*100),"#font[12]{#tilde{g}}#font[92]{(%i)GeV}"%(500+250*Line))
-  t4.SetTextSize(0.03)
-  t4.SetTextAlign(13)
-  t4.SetTextColor(r.kGray+2)
-
-  return lnsq,lngl,t3,t4
-
+# def StauRegion(TanBeta = None):
+#     """Make the stau LSP region for limit plots"""
+#     graph = None
+#     st_m0_tanBeta3 = array.array('d',[0,10,20,30,40,50,60,70,80,90,100,0])
+#     st_m12_tanBeta3 = array.array('d',[337,341,356,378,406,439,473,510,548,587,626,626])
+# 
+#     st_m0_tanBeta10 =  array.array('d',[0,   10, 20, 30, 40, 50, 60, 70, 80,90, 100,110,130,150,0])
+#     st_m12_tanBeta10 = array.array('d',[213,220,240,275,312,352,393,435,476,518,559,600,682,763,763])
+# 
+#     st_m0_tanBeta50 = array.array('d',[200,210,220,230,240,250,260,270,280,290,310,325,200,200])
+#     st_m12_tanBeta50 = [206,226,246,267,288,310,332,354,376,399,450,500,500,206]
+# 
+#     st_m0_tanBeta40 = array.array('d',[380,450,380])
+#     st_m12_tanBeta40 = array.array('d',[590,780,780])
+#     if int(TanBeta) is 3:
+#       graph =r.TGraph(len(st_m12_tanBeta3),st_m0_tanBeta3,st_m12_tanBeta3)
+#     if int(TanBeta) is 10:
+#       graph= r.TGraph(len(st_m0_tanBeta10),st_m0_tanBeta10,st_m12_tanBeta10)
+#     if int(TanBeta) is 50:
+#       graph =r.TGraph(len(st_m12_tanBeta50),st_m0_tanBeta50,st_m12_tanBeta50)
+#     if int(TanBeta) is 40:
+#       graph =r.TGraph(len(st_m12_tanBeta40),st_m0_tanBeta40,st_m12_tanBeta40)
+#     graph.SetFillColor(40)
+#     graph.SetFillStyle(1001)
+#     
+#     
+#     ypos_1 = 0.455 if TanBeta == 10 else 0.143 if TanBeta == 40 else 0.76 
+#     ypos_2 = 0.465 if TanBeta == 10 else 0.153 if TanBeta == 40 else 0.78
+#     xpos_1 = 0.46  if TanBeta == 10 else 0.83  if TanBeta == 40 else 0.16
+#     xpos_2 = 0.1   if TanBeta == 10 else 0.85  if TanBeta == 40 else 0.17
+#  
+# 
+#     legst = r.TLegend(xpos_1,ypos_1,xpos_2,ypos_2);
+#     legst.SetHeader("#tilde{#tau} = LSP")
+#     legst.SetFillStyle(0)
+#     legst.SetBorderSize(0)
+#     legst.SetTextSize(0.03)
+#     legst.SetTextAngle(80)
+#     if TanBeta == 40: legst.SetTextAngle(75);
+#     
+#     return graph,legst
+# 
+# 
+# def Const_Squark_Gluino(TanBeta = None, Line = None):
+#   """Produce the lables and lines for the contours of constant squark and gluino mass, for tan beta 10 or 40"""
+#   pass
+#   # ---lines of constant gluino/squark
+#   SquarkCoef1 = [2.54068e+04, 5.86979e+04, 1.07751e+05, 1.81108e+05, 2.64621e+05]
+#   SquarkCoef2 = [1.88535e-01, 1.93101e-01, 2.00899e-01, 2.21128e-01, 2.21160e-01]
+#   SquarkCoef3 = [2.54068e+04, 5.86979e+04, 1.07751e+05, 1.81108e+05, 2.64621e+05]
+# 
+# 
+#   if int(TanBeta) is 10 :lnsq = r.TF1("lnsq_%i"%Line,"sqrt([0]-x*x*[1]+[2])",0,2000)
+#   if int(TanBeta) is 40 :lnsq = r.TF1("lnsq_%i"%Line,"sqrt([0]-x*x*[1]+[2])",380,2000)
+#   lnsq.SetParameter(0,SquarkCoef1[Line])
+#   lnsq.SetParameter(1,SquarkCoef2[Line])
+#   lnsq.SetParameter(2,SquarkCoef3[Line])
+#   lnsq.SetLineWidth(1)
+#   lnsq.SetLineColor(r.kGray)
+# 
+# 
+# 
+#   GluinoCoef1 = [201.77, 311.027, 431.582, 553.895, 676.137]
+#   GluinoCoef2 = [-0.0146608, -0.01677, -0.022244, -0.0271851, -0.0292212]
+#     
+#   if (TanBeta == 10): lngl = r.TF1("lngl_%i"%Line,"[0]+x*[1]",0,2000)
+#   if (TanBeta == 40): lngl = r.TF1("lngl_%i"%Line,"[0]+x*[1]",380,2000)
+# 
+#   lngl.SetParameter(0,GluinoCoef1[Line])
+#   lngl.SetParameter(1,GluinoCoef2[Line])
+#   lngl.SetLineWidth(1)
+#   lngl.SetLineColor(r.kGray)
+# 
+#   place_x = 170
+#   if int(TanBeta) == 40 :place_x = 390
+#   t3 =r.TLatex(place_x+10*Line,lnsq.Eval(-50+place_x+10*Line)+5,"#font[12]{#tilde{q}}#font[92]{(%i)GeV}"%(500+250*Line))
+#   t3.SetTextSize(0.03)
+#   t3.SetTextAngle(-30+Line*5)
+#   if int(TanBeta) == 40:  t3.SetTextAngle(-40+Line*5)
+#   t3.SetTextColor(r.kGray+2)
+# 
+#   place_x = 423
+#   place_y = 18
+#   if int(TanBeta) == 10:
+#     place_x = 1650
+#     place_y = 10
+#   
+#   if int(TanBeta) == 40:
+#     place_x = 1700
+#     place_y = 10
+#   
+#   t4 = r.TLatex(place_x,place_y+lngl.Eval(800+Line*100),"#font[12]{#tilde{g}}#font[92]{(%i)GeV}"%(500+250*Line))
+#   t4.SetTextSize(0.03)
+#   t4.SetTextAlign(13)
+#   t4.SetTextColor(r.kGray+2)
+# 
+#   return lnsq,lngl,t3,t4
+# 
 
 
 
@@ -146,14 +146,14 @@ class MakeLimitPlot(object):
       self.hist.GetXaxis().SetTitle("m_{0} GeV")
 
     def GetCanvas(self):
-      """docstring for GetCanvas"""
+      """Get the template canvas from the root file provided
+      by the cms group, different template for tanB10 and tanB40"""
       if self.settings['tanB'] == 10:
         self.canvasFile = r.TFile().Open("./GridTaNB10_V1.root")
       if self.settings['tanB'] == 40:
         self.canvasFile = r.TFile().Open("./GridTaNB40_V1.root")
       self.c1 = self.canvasFile.Get("GridCanvas")
-      self.c1.Print()
-      # self.c1.Draw()
+
 
     def MakePlot(self):
         """docstring for MakePlot
@@ -164,13 +164,10 @@ class MakeLimitPlot(object):
         append each of our plots to an out list, so that they dont get garbage collected
         """
 
-        # self.c1.cd()
-        # self.hist.Draw()
         # Ok Lets make the plot look good.
         # We want the filled area for the pm 1sigma to be behind the gluino squark lines, but the limit lines to be in front
         # Draw lines and fill, we fill the lower limit with solid white as a work around for trying to fill between two lines
         for a in sorted(self.settings['LimitLines']):
-            # print (self.settings['LimitLines'])[a]
             if "Sigma" not in a: continue
             l = ExclusionCurve(((self.settings['LimitLines'])[a])['xVals'],((self.settings['LimitLines'])[a])['yVals'])
             l.SetLineColor((self.settings['LimitLines'])[a]['LineColor'])
@@ -182,7 +179,7 @@ class MakeLimitPlot(object):
                 self.obList.append(l)
             
                 l.Draw("same l")
-        
+        # No longer need the  squark and gluino lines as we take the template from the susy group
         # for i in range(self.settings['NSquarkGluinoLines']):
         #     for ob in Const_Squark_Gluino(TanBeta = self.settings['tanB'], Line = i):
         #         self.obList.append(ob)
@@ -192,7 +189,7 @@ class MakeLimitPlot(object):
         
         # Draw lines only, no fill
         for a in sorted(self.settings['LimitLines']):
-            # print (self.settings['LimitLines'])[a]
+            print (self.settings['LimitLines'])[a]
             lf = ExclusionCurve(((self.settings['LimitLines'])[a])['xVals'],((self.settings['LimitLines'])[a])['yVals'])
             lf.SetLineColor((self.settings['LimitLines'])[a]['LineColor'])
             if (self.settings['LimitLines'])[a]['LineStyle'] is not None: lf.SetLineStyle((self.settings['LimitLines'])[a]['LineStyle'])
@@ -215,16 +212,17 @@ class MakeLimitPlot(object):
                 if (self.settings['LimitLines'])[a]["Legend"] is not None:
                     self.CurveLegend.AddEntry(leg,((self.settings['LimitLines'])[a]["Legend"])[0],((self.settings['LimitLines'])[a]["Legend"])[1])
 
-
+        # again we can remove the drawing of the stau region, as we now have a template from the susy group
         # for ob in StauRegion(TanBeta = self.settings['tanB']):
         #   self.obList.append(ob)
         #   ob.Draw("fsame")
         
-        
+        self.c1.Draw()
         self.CurveLegend.Draw("same")
         self.lumilabel.Draw("same")
         self.cmsParams.Draw("same")
         self.hist.Draw("same")
+        self.c1.Draw("same")
         # raw_input()
         self.c1.SaveAs("Limit_tanB_%i_A0_%i_Lumi_%s.pdf"%(self.settings['tanB'],self.settings["A0"],self.settings["intLumi"]))
         self.c1.SaveAs("Limit_tanB_%i_A0_%i_Lumi_%s.png"%(self.settings['tanB'],self.settings["A0"],self.settings["intLumi"]))

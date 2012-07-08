@@ -8,7 +8,7 @@ r.gStyle.SetOptStat(0)
 # Note that the draw order is important, so we put a single charachter in the line key to order the keys
 
 limit = {
-    "intLumi":4.65,
+    "intLumi":4.98,
     "tanB":10,
     "A0":-1,
     "NSquarkGluinoLines":5,

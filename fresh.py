@@ -9,6 +9,7 @@ def setup() :
     
 def susyCanvas(fileName = "GridTanb10_v1.root", canvasName = "GridCanvas") :
     #http://arxiv.org/abs/1202.6580
+    #https://twiki.cern.ch/twiki/bin/view/CMS/SUSY42XSUSYScan#mSUGRA_Templates
     f = r.TFile(fileName)
     canvas = f.Get(canvasName).Clone("%s_clone"%canvasName)
     f.Close()
@@ -71,19 +72,19 @@ def go(outFile = "", bandOutline = False) :
             exp.SetLineWidth(1)
             exp.Draw("lsame")
 
-    #median curve
+    #median expected limit
     exp = spline(points.expectedLimit(), title = "Median Expected Limit #pm 1 #sigma")
     exp.SetLineColor(r.kGreen+3)
     exp.SetLineStyle(7)
     exp.SetLineWidth(2)
     exp.Draw("lsame")
 
-    #legend entry (add fill style of band)
+    #legend entry for expected curves/band
     expLeg = exp.Clone("%s_clone"%exp.GetName())
     expLeg.SetFillStyle(band.GetFillStyle())
     expLeg.SetFillColor(band.GetFillColor())
 
-    #draw observed limit
+    #observed limit
     obs = spline(points.observedLimit(), "Observed Limit (95% C.L.)")
     obs.SetLineWidth(3)
     obs.Draw("lsame")

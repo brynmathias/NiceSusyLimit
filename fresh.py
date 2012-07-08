@@ -52,11 +52,6 @@ def go(outFile = "", bandOutline = False) :
     canvas = susyCanvas()
     canvas.Draw()
 
-    #define legend
-    legend = r.TLegend(0.7, 0.7, 0.9, 0.9)
-    legend.SetFillStyle(0)
-    legend.SetBorderSize(0)
-
     #expected band
     expM = tgraph(points.expectedLimitMinus(), "expected_minus")
     expP = tgraph(points.expectedLimitPlus(), "expected_plus")
@@ -90,6 +85,9 @@ def go(outFile = "", bandOutline = False) :
     obs.Draw("lsame")
 
     #populate and draw legend
+    legend = r.TLegend(0.7, 0.7, 0.9, 0.9)
+    legend.SetFillStyle(0)
+    legend.SetBorderSize(0)
     legend.AddEntry(obs, obs.GetTitle(), "l")
     legend.AddEntry(expLeg, expLeg.GetTitle(), "fl")
     legend.Draw()

@@ -56,34 +56,24 @@ def go(outFile = "", bandOutline = False) :
     legend.SetFillStyle(0)
     legend.SetBorderSize(0)
 
-
-
     #expected band
     expM = tgraph(points.expectedLimitMinus(), "expected_minus")
     expP = tgraph(points.expectedLimitPlus(), "expected_plus")
+    band = enclosedBand(expM, expP)
+    band.SetFillStyle(3001)
+    band.SetFillColor(r.kGreen-9)
+    band.Draw("fsame")
 
     if bandOutline :
-        lineColor = r.kBlue
-        lineStyle = 1
-        lineWidth = 1
         for exp in [expM, expP] :
-            exp.SetLineColor(lineColor)
-            exp.SetLineStyle(lineStyle)
-            exp.SetLineWidth(lineWidth)
+            exp.SetLineColor(r.kBlue)
+            exp.SetLineStyle(1)
+            exp.SetLineWidth(1)
             exp.Draw("lsame")
-
-    lineColor = r.kGreen+3
-    fillStyle = 3001
-    fillColor = r.kGreen-9
-
-    band = enclosedBand(expM, expP)
-    band.SetFillStyle(fillStyle)
-    band.SetFillColor(fillColor)
-    band.Draw("fsame")
 
     #median curve
     exp = spline(points.expectedLimit(), title = "Median Expected Limit #pm 1 #sigma")
-    exp.SetLineColor(lineColor)
+    exp.SetLineColor(r.kGreen+3)
     exp.SetLineStyle(7)
     exp.SetLineWidth(2)
     exp.Draw("lsame")
@@ -106,4 +96,7 @@ def go(outFile = "", bandOutline = False) :
     #print to file
     canvas.Print(outFile)
 
+
+
+#the points defining the curves are stored in points.py
 go(outFile = "RA1_CMSSM.pdf", bandOutline = False)
